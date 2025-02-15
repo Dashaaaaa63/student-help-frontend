@@ -1,0 +1,17 @@
+<div class="confirmation-dialog">
+  <h2>{{ config.data.title }}</h2>
+  <p>{{ config.data.message }}</p>
+
+  <div class="buttons">
+    <p-button
+            icon="pi pi-check"
+            label="Да"
+            (onClick)="confirm()"
+            severity="success"></p-button>
+    <p-button pButton
+            icon="pi pi-times"
+            label="Нет"
+            (onClick)="cancel()"
+            severity="danger"></p-button>
+  </div>
+</div>

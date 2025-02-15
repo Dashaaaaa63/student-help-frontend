@@ -1,0 +1,113 @@
+<div class="profile-container">
+  <!-- Карточка профиля -->
+  <div class="profile-section">
+    <h2>Профиль</h2>
+    <div *ngIf="!isEditMode; else editMode">
+      <p><strong>Логин:</strong> {{ userProfile.username }}</p>
+      <p><strong>Email:</strong> {{ userProfile.email }}</p>
+      <p><strong>Дата создания:</strong> {{ userProfile.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}</p>
+      <p><strong>Дата обновления:</strong> {{ userProfile.updatedAt | date: 'dd.MM.yyyy HH:mm:ss' }}</p>
+      <p-button (onClick)="toggleEditMode()" label="Редактировать"></p-button>
+    </div>
+
+    <!-- Режим редактирования -->
+    <ng-template #editMode>
+      <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <label for="username">Логин:</label>
+        <input id="username" pInputText type="text" formControlName="username"/>
+        <label for="email">Email:</label>
+        <input id="email" pInputText type="text" formControlName="email"/>
+        <div class="actions">
+          <p-button type="submit" [disabled]="profileForm.invalid || isLoading" label="Сохранить"></p-button>
+          <p-button type="button" (click)="cancelEdit()" [disabled]="isLoading" label="Отменить" severity="secondary"
+                    [outlined]="true"></p-button>
+        </div>
+      </form>
+    </ng-template>
+  </div>
+
+  <!-- Форма смены пароля -->
+  <div class="profile-section">
+    <h2>Смена пароля</h2>
+    <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+      <!-- Текущий пароль -->
+      <label for="currentPassword">
+        Текущий пароль:
+        <p-password
+          id="currentPassword"
+          formControlName="currentPassword"
+          [feedback]="false"
+          [toggleMask]="true"
+        ></p-password>
+      </label>
+
+      <div *ngIf="currentPassword?.touched && currentPassword?.invalid">
+        <small
+          *ngIf="currentPassword?.hasError('required')">
+          Обязательное поле.
+        </small>
+        <small *ngIf="currentPassword?.hasError('minlength')">
+          Минимум 6 символов.
+        </small>
+      </div>
+
+      <!-- Новый пароль -->
+      <label for="newPassword">
+        Новый пароль:
+        <p-password
+          id="newPassword"
+          formControlName="newPassword"
+          [feedback]="false"
+          [toggleMask]="true"
+        ></p-password>
+      </label>
+
+      <div *ngIf="newPassword?.touched && newPassword?.invalid">
+        <small
+          *ngIf="newPassword?.hasError('required')">
+          Обязательное поле.
+        </small>
+        <small *ngIf="newPassword?.hasError('minlength')">
+          Минимум 6 символов.
+        </small>
+        <small *ngIf="newPassword?.hasError('passwordMatchesCurrent')">
+          Новый пароль не должен совпадать с текущим.
+        </small>
+      </div>
+
+
+      <!-- Подтверждение пароля -->
+      <label for="confirmPassword">
+        Подтвердите пароль:
+        <p-password
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          [feedback]="false"
+          [toggleMask]="true"
+        ></p-password>
+      </label>
+      <div *ngIf="confirmPassword?.touched && confirmPassword?.invalid">
+        <small
+          *ngIf="confirmPassword?.hasError('required')">
+          Обязательное поле.
+        </small>
+        <small *ngIf="confirmPassword?.hasError('minlength')">
+          Минимум 6 символов.
+        </small>
+        <small *ngIf="confirmPassword?.hasError('passwordsMismatch')">
+          Пароли не совпадают.
+        </small>
+      </div>
+
+      <p-button
+        type="submit"
+        [disabled]="passwordForm.invalid || isLoading"
+        label="Изменить пароль"
+      ></p-button>
+    </form>
+  </div>
+
+  <div class="profile-section">
+    <app-questions-list [userId]="userProfile.id"></app-questions-list>
+  </div>
+</div>

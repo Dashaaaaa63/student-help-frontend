@@ -1,0 +1,58 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="p-field">
+    <label for="title">Заголовок</label>
+    <input id="title" type="text" pInputText formControlName="title"/>
+    <small *ngIf="title?.invalid && title?.touched" class="p-error">
+      Заголовок должен быть от 10 до 200 символов.
+    </small>
+    <small *ngIf="title?.valid">
+      Символов: {{ title?.value?.length }} / 200
+    </small>
+  </div>
+
+  <div class="p-field">
+    <label for="category">Категория</label>
+    <p-dropdown
+      id="category"
+      [options]="categories"
+      formControlName="category"
+      placeholder="Выберите категорию"
+    ></p-dropdown>
+    <small *ngIf="category?.invalid && category?.touched" class="p-error">
+      Пожалуйста, выберите категорию.
+    </small>
+  </div>
+
+  <div class="p-field">
+    <label>Содержание вопроса</label>
+    <p-editor [ngModelOptions]="{standalone: true}" [(ngModel)]="questionText" [style]="{ height: '450px' }">
+      <app-header-template-for-editor></app-header-template-for-editor>
+    </p-editor>
+    @if (questionText) {
+      <small *ngIf="questionText.length < 20 && questionText.length > 5000" class="p-error">
+        Содержание вопроса должно быть от 20 до 5000 символов.
+      </small>
+      <small *ngIf="questionText.length > 0">
+        Символов: {{ clearQuestionText?.length }} / 5000
+      </small>
+    }
+  </div>
+
+  <div class="p-dialog-footer">
+    <p-button
+      type="button"
+      label="Отменить"
+      icon="pi pi-times"
+      (onClick)="onCancel()"
+      severity="secondary"
+    ></p-button>
+    <p-button
+      type="submit"
+      label="Создать"
+      icon="pi pi-check"
+      [disabled]="form.invalid"
+      severity="success"
+    ></p-button>
+  </div>
+
+</form>

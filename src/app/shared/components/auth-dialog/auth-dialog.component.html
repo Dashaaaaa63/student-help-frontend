@@ -1,0 +1,86 @@
+<form *ngIf="!isRegisterMode" [formGroup]="loginForm" (ngSubmit)="submit()">
+  <div class="p-field">
+    <label for="loginEmail">Email</label>
+    <input pInputText id="loginEmail" formControlName="email" placeholder="Email">
+    <small *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="p-error">
+      Введите корректный email.
+    </small>
+  </div>
+
+  <div class="p-field">
+    <label for="loginPassword">Пароль</label>
+    <p-password id="loginPassword" formControlName="password" placeholder="Пароль" [toggleMask]="true" [feedback]="false"/>
+    <small *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="p-error">
+      Пароль должен содержать минимум 6 символов.
+    </small>
+  </div>
+
+  <p-button
+    type="submit"
+    severity="primary"
+    [label]="isLoading ? 'Загрузка...' : 'Авторизация'"
+    [disabled]="loginForm.invalid || isLoading"
+    [loading]="isLoading">
+  </p-button>
+  <p-button [disabled]="isLoading" type="button" severity="help" label="Зарегистрироваться" (onClick)="toggleMode()"></p-button>
+  <p-button type="button" label="Закрыть" severity="secondary" [outlined]="true" (onClick)="closeDialog()"></p-button>
+</form>
+
+<form *ngIf="isRegisterMode" [formGroup]="registerForm" (ngSubmit)="submit()">
+  <div class="p-field">
+    <label for="username">Имя пользователя</label>
+    <input pInputText id="username" formControlName="username" placeholder="Имя пользователя">
+    <small *ngIf="username?.invalid && username?.touched" class="p-error">
+      Имя пользователя обязательно.
+    </small>
+  </div>
+
+  <div class="p-field">
+    <label for="email">Email</label>
+    <input pInputText id="email" formControlName="email" placeholder="Email">
+    <small *ngIf="email?.invalid && email?.touched" class="p-error">
+      Введите корректный email.
+    </small>
+  </div>
+
+  <div class="p-field">
+    <label for="password">Пароль</label>
+    <p-password id="password" formControlName="password" placeholder="Пароль" [toggleMask]="true" [feedback]="false"/>
+    <div *ngIf="password?.touched && password?.invalid">
+      <small
+        *ngIf="password?.hasError('required')">
+        Обязательное поле.
+      </small>
+      <small *ngIf="password?.hasError('minlength')">
+        Минимум 6 символов.
+      </small>
+    </div>
+  </div>
+
+  <div class="p-field">
+    <label for="confirmPassword">Подтверждение пароля</label>
+    <p-password id="confirmPassword" formControlName="confirmPassword" placeholder="Подтверждение пароля" [toggleMask]="true" [feedback]="false"/>
+    <div *ngIf="confirmPassword?.touched && confirmPassword?.invalid">
+      <small
+        *ngIf="confirmPassword?.hasError('required')">
+        Обязательное поле.
+      </small>
+      <small *ngIf="confirmPassword?.hasError('minlength')">
+        Минимум 6 символов.
+      </small>
+      <small *ngIf="confirmPassword?.hasError('passwordsMismatch')">
+        Пароли не совпадают.
+      </small>
+    </div>
+  </div>
+
+  <p-button
+    type="submit"
+    severity="primary"
+    [label]="isLoading ? 'Загрузка...' : 'Регистрация'"
+    [disabled]="registerForm.invalid || isLoading"
+    [loading]="isLoading">
+  </p-button>
+  <p-button type="button" severity="help" label="Авторизоваться" (onClick)="toggleMode()"></p-button>
+  <p-button type="button" label="Закрыть" severity="secondary" [outlined]="true" (onClick)="closeDialog()"></p-button>
+</form>

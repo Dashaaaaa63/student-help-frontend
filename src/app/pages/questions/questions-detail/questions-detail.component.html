@@ -1,0 +1,70 @@
+<div *ngIf="question">
+  <!-- Вопрос -->
+  <div class="question-container">
+    <h1>{{ question.title }}</h1>
+    <p>{{ question.content }}</p>
+    <small>Категория: {{ question.category }}</small>
+    <br>
+    <small>Автор: {{ question.author.username }}</small>
+
+    <!-- Кнопка редактирования -->
+<!--    TODO Решить проблему, что после отправки измененного вопроса, пропадает кнопка редактировать-->
+      <button
+        *ngIf="isAuthenticated && currentUser?._id === question.author._id"
+        pButton
+        label="Редактировать"
+        (click)="toggleEdit()"
+      ></button>
+
+
+    <!-- Форма редактирования -->
+    <div *ngIf="isEditing">
+      <textarea pInputTextarea rows="10" cols="100" [(ngModel)]="question.content"></textarea>
+      <button pButton label="Сохранить" (click)="saveEditedQuestion(question)"></button>
+    </div>
+  </div>
+
+  <!-- Лучший ответ -->
+  <div *ngIf="bestAnswer" class="best-answer">
+    <h3>Лучший ответ:</h3>
+    <p>{{bestAnswer.content}}</p>
+    <small>Создан: {{ bestAnswer.createdAt | date: 'dd.MM.yyyy'}}</small>
+    <br>
+    <small>Автор: {{ bestAnswer.author.username }}</small>
+  </div>
+
+  <!-- Остальные ответы -->
+  <div class="answers-list">
+    <h3>Ответы:</h3>
+    <div class="answer" *ngFor="let answer of answersWithoutBestAnswer">
+      <p>{{answer.content}}</p>
+      <small>Создан: {{ answer.createdAt | date: 'dd.MM.yyyy'}}</small>
+      <br>
+      <small>Автор: {{ answer.author.username }}</small>
+      <button
+        *ngIf="isAuthenticated && currentUser?._id === question.author._id"
+        pButton
+        label="Выбрать как лучший"
+        (click)="markAsBestAnswer(answer._id)"
+      ></button>
+    </div>
+  </div>
+
+  <!-- Форма добавления ответа -->
+  <form [formGroup]="answerForm" (ngSubmit)="submitAnswer()">
+    <textarea pInputTextarea rows="10" cols="100"  formControlName="content"></textarea>
+
+    <div *ngIf="answerForm.get('content')?.invalid && answerForm.get('content')?.touched">
+      <small *ngIf="answerForm.get('content')?.errors?.['required']">Ответ не может быть пустым.</small>
+      <small *ngIf="answerForm.get('content')?.errors?.['minlength']">Минимальная длина ответа — 20 символов.</small>
+    </div>
+
+    <button
+      pButton
+      type="submit"
+      label="Отправить ответ"
+      [disabled]="answerForm.invalid"
+    >
+    </button>
+  </form>
+</div>

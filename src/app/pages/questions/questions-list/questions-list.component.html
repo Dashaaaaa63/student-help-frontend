@@ -1,0 +1,55 @@
+<div class="questions-container">
+  <!-- Выбор категории -->
+  <p-dropdown
+    [options]="categories"
+    [(ngModel)]="selectedCategory"
+    placeholder="Выберите категорию"
+    (onChange)="onCategoryChange()"
+  ></p-dropdown>
+
+  <!-- Поиск -->
+  <input
+    type="text"
+    pInputText
+    placeholder="Поиск..."
+    [(ngModel)]="searchQuery"
+    (input)="onSearch()"
+  />
+
+  <button pButton type="button" label="Создать вопрос" (click)="showCreateQuestionDialog()"></button>
+
+  <!-- Состояние загрузки -->
+  <div *ngIf="isLoading$ | async" class="loading">
+    <p-progressSpinner></p-progressSpinner>
+    <span>Загрузка...</span>
+  </div>
+
+  <!-- Список вопросов -->
+  <div *ngIf="(questions$ | async)?.length === 0 && !(isLoading$ | async)" class="empty-state">
+    Нет доступных вопросов.
+  </div>
+
+  <div class="questions-grid">
+    <p-card *ngFor="let question of questions$ | async">
+      <ng-template pTemplate="header">
+        <h3>{{ question.title }}</h3>
+      </ng-template>
+      <p>{{ question.content | slice: 0:100 }}...</p>
+      <small>Категория: {{ question.category }}</small>
+      <br>
+      <small>Автор: {{ question.author.username }}</small>
+      <button pButton severity="primary" label="Подробности"  size="small" (click)="viewDetails(question._id)"></button>
+    </p-card>
+  </div>
+
+  <!-- Пагинация -->
+  <p-paginator
+    [rows]="pageSize"
+    [totalRecords]="totalQuestions$ | async"
+    [first]="(currentPage - 1) * pageSize"
+    (onPageChange)="onPageChange($event)"
+
+  ></p-paginator>
+<!--  TODO Добавить выбор количество элементов на странице-->
+</div>
+<p-toast></p-toast>

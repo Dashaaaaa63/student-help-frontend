@@ -1,0 +1,15 @@
+.confirmation-dialog {
+  padding: 20px;
+  text-align: center;
+
+  h2 {
+    margin-bottom: 15px;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+}
