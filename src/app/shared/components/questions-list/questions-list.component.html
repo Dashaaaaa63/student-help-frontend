@@ -1,72 +1,73 @@
 <div class="questions-container">
-  <!-- Выбор категории -->
-  <p-dropdown
-    [options]="categories"
-    [(ngModel)]="selectedCategory"
-    placeholder="Выберите категорию"
-    (onChange)="onCategoryChange()"
-  ></p-dropdown>
+  <div class="section-panel">
+    <div class="flex flex-column md:flex-row md:justify-content-start gap-2">
+      <!-- Выбор категории -->
+      <p-dropdown
+        [options]="categories"
+        [(ngModel)]="selectedCategory"
+        placeholder="Выберите категорию"
+        (onChange)="onCategoryChange()"
+      ></p-dropdown>
 
-  <!-- Поиск -->
-  <input
-    type="text"
-    pInputText
-    placeholder="Поиск..."
-    [(ngModel)]="searchQuery"
-    (input)="onSearch()"
-  />
+      <!-- Поиск -->
+      <input
+        type="text"
+        pInputText
+        placeholder="Поиск..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearch()"
+      />
 
-  <!-- OverlayPanel с фильтрами -->
-  <!-- Кнопка открытия панели -->
-  <div class="flex justify-content-end mb-3 badge-container" >
-    <p-button
-      icon="pi pi-filter"
-      label="Фильтры"
-      (onClick)="toggleFiltersPanel($event)"
-      [badge]="activeFiltersCount > 0 ? activeFiltersCount.toString() : ''"
-      badgeClass="p-badge-sm"
-    ></p-button>
+      <!-- OverlayPanel с фильтрами -->
+      <!-- Кнопка открытия панели -->
+      <p-button
+        icon="pi pi-filter"
+        label="Фильтры"
+        (onClick)="toggleFiltersPanel($event)"
+        [badge]="activeFiltersCount > 0 ? activeFiltersCount.toString() : ''"
+        badgeClass="p-badge-sm"
+      ></p-button>
+
+      <!-- Панель -->
+      <p-overlayPanel
+        #filtersPanel
+        [dismissable]="true"
+        [showCloseIcon]="true">
+        <div class="flex flex-column gap-3">
+          <!--  Показывать только с ответом -->
+          <p-checkbox [(ngModel)]="hideQuestionsWithoutAnswers"
+                      label="Скрыть вопросы без ответов" [binary]="true"/>
+
+          <!-- Выбор поля для сортировки -->
+          <p-dropdown
+            [options]="sortOptions"
+            [(ngModel)]="currentSortField"
+            optionLabel="label"
+            placeholder="Выберите поле"
+           ></p-dropdown>
+
+          <!-- Выбор направления сортировки -->
+          <p-dropdown
+            [options]="sortOrderOptions"
+            [(ngModel)]="currentSortOrder"
+            optionLabel="label"
+            placeholder="Выберите направление"
+          ></p-dropdown>
+
+          <!-- Кнопки управления -->
+          <div class="flex gap-2">
+            <p-button type="button" label="Сбросить" (onClick)="resetFilters()" severity="secondary"
+                      [outlined]="true"></p-button>
+            <p-button type="button" label="Применить" (onClick)="applyFilters()"></p-button>
+          </div>
+        </div>
+      </p-overlayPanel>
+
+      <!-- Создание вопроса -->
+      <p-button type="button" label="Создать вопрос" icon="pi pi-plus" (onClick)="showCreateQuestionDialog()"></p-button>
+    </div>
   </div>
 
-  <!-- Панель -->
-  <p-overlayPanel
-    #filtersPanel
-    [dismissable]="true"
-    [showCloseIcon]="true"
-    styleClass="w-full sm:w-25rem">
-    <div class="flex flex-column gap-3">
-      <!--  Показывать только с ответом -->
-      <p-checkbox [(ngModel)]="hideQuestionsWithoutAnswers"
-                  label="Скрыть вопросы без ответов" [binary]="true"/>
-
-      <!-- Выбор поля для сортировки -->
-      <p-dropdown
-        [options]="sortOptions"
-        [(ngModel)]="currentSortField"
-        optionLabel="label"
-        placeholder="Выберите поле"
-      ></p-dropdown>
-
-      <!-- Выбор направления сортировки -->
-      <p-dropdown
-        [options]="sortOrderOptions"
-        [(ngModel)]="currentSortOrder"
-        optionLabel="label"
-        placeholder="Выберите направление"
-      ></p-dropdown>
-
-      <!-- Кнопки управления -->
-      <div class="flex justify-content-end gap-2">
-        <p-button type="button" label="Сбросить" (onClick)="resetFilters()" severity="secondary"
-                  [outlined]="true"></p-button>
-        <p-button pButton type="button" label="Применить" (onClick)="applyFilters()"></p-button>
-      </div>
-    </div>
-  </p-overlayPanel>
-
-
-  <!-- Создание вопроса -->
-  <p-button type="button" label="Создать вопрос" (onClick)="showCreateQuestionDialog()"></p-button>
 
   <!-- Состояние загрузки -->
   <div *ngIf="isLoading$ | async" class="loading">
@@ -74,41 +75,59 @@
   </div>
 
   <!-- Список вопросов -->
-  <div *ngIf="(questions$ | async)?.length === 0 && !(isLoading$ | async)" class="empty-state">
+  <div *ngIf="(questions$ | async)?.length === 0 && !(isLoading$ | async)" class="section empty-state">
     Нет доступных вопросов.
   </div>
 
-  <div class="questions-grid">
-    <p-card *ngFor="let question of questions$ | async">
-      <ng-template pTemplate="header">
-        <h3>{{ question.title }}</h3>
-      </ng-template>
-      <p innerHtml="{{ question.content | slice: 0:100 }}">...</p>
-      <small>Категория: {{ question.category }}</small>
-      <br>
-      <small>Автор: {{ question.author.username }}</small>
-      <br>
-      <small>Создан: {{ question.createdAt | date : 'dd.MM.yyyy' }}</small>
-      <br>
-      <small>Изменен: {{ question.updatedAt | date : 'dd.MM.yyyy' }}</small>
-      <p-button severity="primary" label="Подробности" size="small" (onClick)="viewDetails(question.id)"></p-button>
-      <div>
-        <p-tag value="Количество ответов: {{question.answersCount > 0 ? question.answersCount : 0}}"></p-tag>
-        <p-tag [value]="question.bestAnswerId ? 'Есть лучший ответ': 'Нет лучшего ответа'"
-               [severity]="question.bestAnswerId ? 'success': 'info'"></p-tag>
+  <div class="section-panel">
+    <div class="grid">
+      <div class="col-12 md:col-6 lg:col-3" *ngFor="let question of questions$ | async">
+        <p-card class="custom-card">
+          <ng-template pTemplate="title">
+            @if (question.title.length > 100) {
+              {{ question.title | slice: 0: 100 }}...
+            } @else {
+              {{ question.title }}
+            }
+          </ng-template>
+          <ng-template pTemplate="body">
+            @if (question.content.length > 100) {
+              <span innerHTML="{{ question.content | slice: 0:100 }}..."></span>
+            } @else {
+              <span innerHTML="{{ question.content }}"></span>
+            }
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <div class="flex flex-column gap-2">
+              <small>Категория: {{ question.category }}</small>
+              <br>
+              <small>Автор: {{ question.author.username }}</small>
+              <br>
+              <small>Создан: {{ question.createdAt | date : 'dd.MM.yyyy' }}</small>
+              <br>
+              <small>Изменен: {{ question.updatedAt | date : 'dd.MM.yyyy' }}</small>
+              <p-button severity="primary" label="Подробности" size="small" icon="pi pi-arrow-right" iconPos="right"
+                        (onClick)="viewDetails(question.id)"></p-button>
+              <p-tag value="Количество ответов: {{question.answersCount > 0 ? question.answersCount : 0}}"></p-tag>
+              <p-tag [value]="question.bestAnswerId ? 'Есть лучший ответ': 'Нет лучшего ответа'"
+                     [severity]="question.bestAnswerId ? 'success': 'info'"></p-tag>
+            </div>
+
+          </ng-template>
+        </p-card>
       </div>
+    </div>
 
-    </p-card>
+    <!-- Пагинация -->
+    <p-paginator
+      [rows]="pageSize"
+      [totalRecords]="totalQuestions$ | async"
+      [first]="(currentPage - 1) * pageSize"
+      (onPageChange)="onPageChange($event)"
+      [showCurrentPageReport]="true"
+      [rowsPerPageOptions]="[12, 24, 36]"
+      currentPageReportTemplate="{first}-{last} из {totalRecords}"
+    ></p-paginator>
   </div>
-
-  <!-- Пагинация -->
-  <p-paginator
-    [rows]="pageSize"
-    [totalRecords]="totalQuestions$ | async"
-    [first]="(currentPage - 1) * pageSize"
-    (onPageChange)="onPageChange($event)"
-    [showCurrentPageReport]="true"
-    [rowsPerPageOptions]="[10, 20, 30]"
-    currentPageReportTemplate="Показано {first}-{last} из {totalRecords}"
-  ></p-paginator>
 </div>

@@ -1,16 +1,20 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="p-field">
+<form class="form-container" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="field">
     <label for="title">Заголовок</label>
     <input id="title" type="text" pInputText formControlName="title"/>
-    <small *ngIf="title?.invalid && title?.touched" class="p-error">
-      Заголовок должен быть от 10 до 200 символов.
-    </small>
-    <small *ngIf="title?.valid">
-      Символов: {{ title?.value?.length }} / 200
-    </small>
+    <ng-container *ngIf="title?.invalid && title?.touched">
+      <small class="validate-error">
+        Заголовок должен быть от 10 до 200 символов.
+      </small>
+    </ng-container>
+    <ng-container *ngIf="title?.valid">
+      <small>
+        Символов: {{ title?.value?.length }} / 200
+      </small>
+    </ng-container>
   </div>
 
-  <div class="p-field">
+  <div class="field">
     <label for="category">Категория</label>
     <p-dropdown
       id="category"
@@ -18,19 +22,23 @@
       formControlName="category"
       placeholder="Выберите категорию"
     ></p-dropdown>
-    <small *ngIf="category?.invalid && category?.touched" class="p-error">
-      Пожалуйста, выберите категорию.
-    </small>
+    <ng-container *ngIf="category?.invalid && category?.touched">
+      <small class="validate-error">
+        Пожалуйста, выберите категорию.
+      </small>
+    </ng-container>
   </div>
 
-  <div class="p-field">
+  <div class="field">
     <label>Содержание вопроса</label>
-    <p-editor [ngModelOptions]="{standalone: true}" [(ngModel)]="questionText" [style]="{ height: '450px' }">
-      <app-header-template-for-editor></app-header-template-for-editor>
+    <p-editor [ngModelOptions]="{standalone: true}" [(ngModel)]="questionText" [style]="{ height: '250px' }">
+      <ng-template pTemplate="header">
+        <app-header-template-for-editor></app-header-template-for-editor>
+      </ng-template>
     </p-editor>
     @if (questionText) {
-      <small *ngIf="questionText.length < 20 && questionText.length > 5000" class="p-error">
-        Содержание вопроса должно быть от 20 до 5000 символов.
+      <small *ngIf="questionText.length < 1 && questionText.length > 5000" class="validate-error">
+        Содержание вопроса должно быть от 1 до 5000 символов.
       </small>
       <small *ngIf="questionText.length > 0">
         Символов: {{ clearQuestionText?.length }} / 5000
@@ -38,7 +46,7 @@
     }
   </div>
 
-  <div class="p-dialog-footer">
+  <div class="actions">
     <p-button
       type="button"
       label="Отменить"

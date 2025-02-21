@@ -1,4 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
-@import "primeicons/primeicons.css";
+@use "primeicons/primeicons.css";
+@use "primeng/questions-list-override";
+@use "general";
 @import '../../node_modules/quill/dist/quill.core.css';
 @import '../../node_modules/quill/dist/quill.snow.css';

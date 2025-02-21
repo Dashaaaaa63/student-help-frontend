@@ -1,0 +1,33 @@
+.questions-container {
+  .grid .col-3 .col-6 col-12 {
+    display: flex;
+  }
+
+  .custom-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .p-card {
+      height: 100%;
+
+      .p-card-body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: space-evenly;
+
+        .p-card-content {
+          flex-grow: 1;
+        }
+      }
+    }
+  }
+
+  //.p-panel {
+  //  flex-grow: 1;
+  //  display: flex;
+  //  flex-direction: column;
+  //}
+}

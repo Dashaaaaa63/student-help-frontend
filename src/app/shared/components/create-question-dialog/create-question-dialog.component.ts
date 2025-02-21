@@ -64,6 +64,7 @@ export class CreateQuestionDialogComponent {
     if(!this.questionText || this.questionText.length < 1) {
       return;
     }
+
     if (this.form.valid) {
       const request: ICreateQuestionRequest = {
         title: this.title?.value,
@@ -80,3 +81,4 @@ export class CreateQuestionDialogComponent {
 
   protected readonly length = length;
 }
+

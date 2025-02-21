@@ -13,11 +13,9 @@ export class ConfirmationDialogService {
     return this.dialogService.open(ConfirmationDialogComponent, {
       header: title,
       data: {
-        title,
         message
       },
-      width: '450px',
-      contentStyle: { 'max-height': '500px', overflow: 'auto' },
+      contentStyle: { 'max-height': '500px', 'max-width': '450px', overflow: 'auto' },
       baseZIndex: 10000
     }).onClose;
   }

@@ -1,0 +1,63 @@
+app-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+  position: relative;
+
+  .bg {
+    position: absolute;
+    top: 0;
+    left:0;
+    right: 0;
+    bottom: 0;
+    background-image: url("/assets/images/background.jpg");
+    background-position: center;
+    background-size: 50%;
+    background-repeat: repeat;
+    filter: brightness(1.7);
+    z-index: -1;
+  }
+
+  header {
+    width: 100%;
+  }
+  main {
+    max-width: 1200px;
+  }
+}
+
+.section-panel {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 1.25rem;
+  background-color: var(--surface-100);
+  h1, h3 {
+    margin: 0;
+  }
+  .p-paginator {
+    background-color: var(--surface-100);
+  }
+}
+
+.form-container {
+  label {
+    display: block;
+  }
+
+  small {
+    margin-left: 0.625rem;
+  }
+
+  .validate-error {
+    color: red;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+

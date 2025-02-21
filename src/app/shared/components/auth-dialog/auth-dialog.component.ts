@@ -51,6 +51,7 @@ export class AuthDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForms()
+    this.config.contentStyle = {'max-height': '640px', overflow: 'auto'};
   }
 
   initForms(): void {

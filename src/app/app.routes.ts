@@ -9,8 +9,8 @@ export const routes: Routes = [
   },
   {
     path: 'questions/:id',
-    loadComponent: () => import('./pages/questions/question-detail/question-detail.component')
-      .then(m => m.QuestionDetailComponent)
+    loadComponent: () => import('./pages/questions/question-details/question-details.component')
+      .then(m => m.QuestionDetailsComponent)
   },
   {
     path: 'profile',

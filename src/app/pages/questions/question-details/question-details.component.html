@@ -1,0 +1,175 @@
+<div class="question-detail-container">
+  <div *ngIf="isQuestionLoading">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+  <div *ngIf="question">
+    <!-- Вопрос -->
+    <div class="section-panel">
+      <div class="flex flex-column gap-4 mb-2">
+        <h1>{{ question.title }}</h1>
+        <span [innerHTML]="question.content"></span>
+        <div class="flex flex-column">
+          <small>Категория: {{ question.category }}</small>
+          <small>Автор: {{ question.author.username }}</small>
+          <small>Создан: {{ question.author.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}</small>
+          <small>Изменен: {{ question.author.updatedAt | date: 'dd.MM.yyyy HH:mm:ss' }}</small>
+        </div>
+      </div>
+
+      <!-- Кнопка редактирования -->
+      @if (isAuthenticated && currentUser?.id === question.author.id) {
+        <div class="flex gap-2 mb-2">
+          <p-button
+            label="Редактировать"
+            (onClick)="toggleEdit()"
+            icon="pi pi-pencil"
+          ></p-button>
+          <p-button
+            severity="warning"
+            [label]="deleteQuestionLoading ? 'Удаляем...' : 'Удалить'"
+            [disabled]="deleteQuestionLoading"
+            [loading]="deleteQuestionLoading"
+            icon="pi pi-trash"
+            (onClick)="deleteQuestion()"></p-button>
+        </div>
+      }
+
+      <!-- Форма редактирования -->
+      <div *ngIf="isEditing" class="flex flex-column gap-2">
+        <p-editor [style]="{ height: '320px'}" [(ngModel)]="newQuestionText">
+          <ng-template pTemplate="header">
+            <app-header-template-for-editor></app-header-template-for-editor>
+          </ng-template>
+        </p-editor>
+        <div class="flex gap-2">
+          <p-button
+            [disabled]="editQuestionLoading"
+            [label]="editQuestionLoading? 'Сохраняем...':'Сохранить'"
+            [loading]="editQuestionLoading"
+            icon="pi pi-save"
+            (onClick)="saveEditedQuestion()"
+          ></p-button>
+          <p-button
+            [disabled]="editQuestionLoading"
+            label="Отменить"
+            severity="secondary"
+            [outlined]="true"
+            icon="pi pi-times"
+            (onClick)="toggleEdit()"
+          ></p-button>
+        </div>
+      </div>
+    </div>
+
+    @if (question.answers && question.answers.length > 0) {
+      <!-- Лучший ответ -->
+      <div class="section-panel">
+        <h3>Лучший ответ</h3>
+        @if (bestAnswer) {
+          <div class="flex flex-column gap-4 mb-2">
+            <span [innerHTML]="bestAnswer.content"></span>
+            <div class="flex flex-column">
+              <small>Автор: {{ bestAnswer.author.username }}</small>
+              <small>Создан: {{ bestAnswer.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}</small>
+            </div>
+          </div>
+          @if (isAuthenticated &&
+          currentUser &&
+          (bestAnswer.author.id === currentUser.id || question.author.id === currentUser.id)) {
+            <div class="flex gap-2 mb-2">
+              <p-button
+                severity="warning"
+                [label]="deleteAnswerLoading? 'Удаляем...' : 'Удалить'"
+                [disabled]="deleteAnswerLoading"
+                [loading]="deleteAnswerLoading"
+                icon="pi pi-trash"
+                (onClick)="deleteAnswer(bestAnswer.id)"
+              ></p-button>
+            </div>
+          }
+        } @else {
+          <span>На данный момент, лучший ответ не выбран.</span>
+        }
+      </div>
+
+      <!-- Остальные ответы -->
+      <div class="section-panel">
+        <div class="flex flex-column gap-4">
+          <h3>Ответы</h3>
+          <p-card *ngFor="let answer of answersWithoutBestAnswer">
+            <div class="flex flex-column gap-4 mb-2">
+              <span [innerHTML]="answer.content"></span>
+              <div class="flex flex-column">
+                <small>Автор: {{ answer.author.username }}</small>
+                <small>Создан: {{ answer.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}</small>
+              </div>
+            </div>
+            <div class="flex gap-2 mb-2">
+              <p-button
+                *ngIf="isAuthenticated && currentUser?.id === question.author.id"
+                [label]="markAnswersAsBestLoading ? 'Выбираем...':'Выбрать как лучший'"
+                [loading]="markAnswersAsBestLoading || deleteAnswerLoading"
+                [disabled]="markAnswersAsBestLoading || deleteAnswerLoading"
+                icon="pi pi-star"
+                (onClick)="markAsBestAnswer(answer.id)"
+              ></p-button>
+              @if (isAuthenticated && currentUser &&
+                  (
+                    (currentUser.id === answer.author.id) ||
+                    (currentUser.id === question.author.id)
+                  )
+                ) {
+                <p-button
+                  severity="warning"
+                  [label]="deleteAnswerLoading ? 'Удаляем...' : 'Удалить'"
+                  [loading]="deleteAnswerLoading || markAnswersAsBestLoading"
+                  [disabled]="deleteAnswerLoading || markAnswersAsBestLoading"
+                  icon="pi pi-trash"
+                  (onClick)="deleteAnswer(answer.id)"
+                ></p-button>
+              }
+            </div>
+          </p-card>
+        </div>
+      </div>
+
+    } @else {
+      <div class="section-panel">
+        <div class="flex flex-column gap-4">
+          <h3>Ответы</h3>
+          <span>На данный момент нет ответов</span>
+        </div>
+      </div>
+    }
+
+    <!-- Форма добавления ответа -->
+    <div class="section-panel mt-2">
+      <div class="flex flex-column gap-4">
+        <h3 class="mb-2">Добавить свой ответ</h3>
+        @if (isAuthenticated) {
+          <p-editor [(ngModel)]="newAnswerText" [style]="{ height: '320px'}">
+            <ng-template pTemplate="header">
+              <app-header-template-for-editor></app-header-template-for-editor>
+            </ng-template>
+          </p-editor>
+          <div class="mt-2">
+            <p-button
+              [label]="createAnswerLoading ? 'Добавляем...': 'Добавить'"
+              [disabled]="createAnswerLoading"
+              [loading]="createAnswerLoading"
+              icon="pi pi-plus"
+              (onClick)="submitAnswer()"
+            >
+            </p-button>
+          </div>
+        } @else {
+          <span>Для добавление ответа, нужно авторизоваться</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!question && !isQuestionLoading" class="section-panel">
+    <p>Вопрос не найден или был удален</p>
+  </div>
+</div>

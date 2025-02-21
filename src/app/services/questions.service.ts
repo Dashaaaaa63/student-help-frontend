@@ -25,7 +25,7 @@ export class QuestionsService {
   private searchQuerySubject = new BehaviorSubject<string>('');
   private categorySubject = new BehaviorSubject<string>('all');
   private pageSubject = new BehaviorSubject<number>(1);
-  private pageSizeSubject = new BehaviorSubject<number>(10);
+  private pageSizeSubject = new BehaviorSubject<number>(12);
   private hideQuestionsWithoutAnswersSubject = new BehaviorSubject(false);
   private sortFieldSubject = new BehaviorSubject<keyof IQuestion>('createdAt');
   private sortOrderSubject = new BehaviorSubject<'asc' | 'desc'>('desc');
@@ -55,6 +55,13 @@ export class QuestionsService {
         sortOrder: sortOrder,
         userId: filterByUser
       }).pipe(
+        map((response) => ({
+          ...response,
+          items: response.items.map((question) => ({
+            ...question,
+            content: question.content.replace(/&nbsp;/g, ' '),
+          }))
+        })),
         shareReplay(1), // Кэширование последнего результата
         catchError((error) => {
           this.setLoading(false);
@@ -121,7 +128,11 @@ export class QuestionsService {
       map(([question, answers]) => {
           return {
             ...question,
-            answers: answers || [],
+            content: question.content.replace(/&nbsp;/g, ' '),
+            answers: answers.map((answer) => ({
+              ...answer,
+              content: answer.content.replace(/&nbsp;/g, ' '),
+            })) || [],
           }
         }
       )
@@ -131,7 +142,7 @@ export class QuestionsService {
   updateQuestion(id: string, updateData: IQuestion): Observable<IQuestion> {
     const request: IUpdateQuestionRequest = {
       title: updateData.title,
-      content: updateData.content,
+      content: updateData.content.replace(/&nbsp;/g, ' '),
       category: updateData.category,
       bestAnswerId: updateData.bestAnswerId
     }
@@ -145,13 +156,16 @@ export class QuestionsService {
   addAnswer(questionId: string, content: string): Observable<IAnswer> {
     const request = {
       questionId: questionId,
-      content: content
+      content: content.replace(/&nbsp;/g, ' ')
     }
     return this.restService.createAnswer(request);
   }
 
   createQuestion(createQuestionRequest: ICreateQuestionRequest): Observable<void> {
-    return this.restService.createQuestion(createQuestionRequest);
+    return this.restService.createQuestion({
+      ...createQuestionRequest,
+      content: createQuestionRequest.content.replace(/&nbsp;/g, ' ')
+    });
   }
 
   deleteQuestion(id: string): Observable<void> {

@@ -26,6 +26,7 @@ import {CheckboxModule} from "primeng/checkbox";
 import {BadgeModule} from "primeng/badge";
 import {AuthService} from "../../../services/auth.service";
 import {Subscription} from "rxjs";
+import {PanelModule} from "primeng/panel";
 
 @Component({
   selector: 'app-questions-list',
@@ -49,6 +50,7 @@ import {Subscription} from "rxjs";
     OverlayPanelModule,
     BadgeModule,
     Button,
+    PanelModule,
   ],
   templateUrl: './questions-list.component.html',
   styleUrl: './questions-list.component.scss'
@@ -72,7 +74,7 @@ export class QuestionsListComponent implements OnInit, OnDestroy {
   selectedCategory = 'all';
   searchQuery = '';
   currentPage = 1;
-  pageSize = 10;
+  pageSize = 12;
   hideQuestionsWithoutAnswers = false;
   isAuth = false;
 
@@ -243,8 +245,6 @@ export class QuestionsListComponent implements OnInit, OnDestroy {
   private showAuthDialog(): void {
     this.dialogService.open(AuthDialogComponent, {
       header: 'Вход',
-      width: '450px',
-      contentStyle: {'max-height': '500px', overflow: 'auto'},
       baseZIndex: 10000,
     }).onClose.subscribe({
       next: () => {

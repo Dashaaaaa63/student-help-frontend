@@ -1,10 +1,9 @@
 <p-menubar [model]="menuItems">
   <ng-template pTemplate="end">
-    <ng-container *ngIf="currentUser">
-      <p *ngIf="isAuthenticated()">Привет, {{ currentUser.username }}</p>
-    </ng-container>
-    <p-button *ngIf="!isAuthenticated()" label="Войти" icon="pi pi-sign-in" (onClick)="openAuthDialog()"></p-button>
-    <p-button *ngIf="isAuthenticated()" label="Личный кабинет" icon="pi pi-user" routerLink="/profile"></p-button>
-    <p-button *ngIf="isAuthenticated()" label="Выйти" icon="pi pi-sign-out" (onClick)="logout()"></p-button>
+    <div class="flex gap-3 align-items-center">
+      <span *ngIf="currentUser && isAuthenticated()">Привет, {{ currentUser.username }}</span>
+      <p-button *ngIf="!isAuthenticated()" label="Войти" icon="pi pi-sign-in" (onClick)="openAuthDialog()"></p-button>
+      <p-button *ngIf="isAuthenticated()" label="Выйти" icon="pi pi-sign-out" (onClick)="logout()"></p-button>
+    </div>
   </ng-template>
 </p-menubar>

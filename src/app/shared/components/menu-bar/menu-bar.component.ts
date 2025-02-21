@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, signal} from '@angular/core';
 import {AuthService} from "../../../services/auth.service";
 import {Router} from "@angular/router";
-import {MenuItem} from "primeng/api";
+import {MenuItem, MenuItemCommandEvent} from "primeng/api";
 import {MenubarModule} from "primeng/menubar";
 import {NgIf} from "@angular/common";
 import {Button} from "primeng/button";
@@ -30,7 +30,21 @@ export class MenuBarComponent implements OnInit, OnDestroy {
 
 
   menuItems: MenuItem[] = [
-    {label: 'Вопросы', routerLink: '/questions', icon: 'pi pi-list'}
+    {label: 'Вопросы', routerLink: '/questions', icon: 'pi pi-list'},
+    {
+      label: 'Личный кабинет',
+      routerLink: '/profile',
+      icon: 'pi pi-user',
+      command: (event: MenuItemCommandEvent) => {
+        if(this.isAuthenticated()) {
+          this.router.navigate(['/profile']);
+        } else {
+          this.openAuthDialog();
+        }
+      }
+
+
+    }
   ];
 
   private isAuthenticatedSubscription = new Subscription();
@@ -66,8 +80,6 @@ export class MenuBarComponent implements OnInit, OnDestroy {
   openAuthDialog(): void {
     this.dialogService.open(AuthDialogComponent, {
       header: 'Вход',
-      width: '600px',
-      contentStyle: {'max-height': '500px', overflow: 'auto'},
       baseZIndex: 10000,
     })
   }
