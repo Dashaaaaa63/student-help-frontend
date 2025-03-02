@@ -1,4 +1,5 @@
 .questions-container {
+  position: relative;
 
   .filters {
     display: flex;
@@ -12,6 +13,18 @@
     .p-inputtext {
       flex: 1;
     }
+  }
+
+  .filters-panel {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .paginator-panel {
+    position: sticky;
+    bottom: 0;
+    padding: 0;
   }
 
   .loading {
@@ -43,3 +56,16 @@
   }
 }
 
+:host {
+
+  &.no-paginator-sticky {
+    color: red;
+
+    .questions-container {
+      .paginator-panel {
+        position: static;
+      }
+    }
+  }
+
+}

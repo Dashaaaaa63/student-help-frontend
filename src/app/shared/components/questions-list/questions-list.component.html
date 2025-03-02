@@ -1,6 +1,6 @@
-<div class="questions-container">
-  <div class="section-panel">
-    <div class="flex flex-column md:flex-row md:justify-content-start gap-2">
+<div class="questions-container relative">
+  <div class="section-panel filters-panel">
+    <div class=" flex flex-column md:flex-row md:justify-content-start gap-2">
       <!-- Выбор категории -->
       <p-dropdown
         [options]="categories"
@@ -44,7 +44,7 @@
             [(ngModel)]="currentSortField"
             optionLabel="label"
             placeholder="Выберите поле"
-           ></p-dropdown>
+          ></p-dropdown>
 
           <!-- Выбор направления сортировки -->
           <p-dropdown
@@ -64,7 +64,8 @@
       </p-overlayPanel>
 
       <!-- Создание вопроса -->
-      <p-button type="button" label="Создать вопрос" icon="pi pi-plus" (onClick)="showCreateQuestionDialog()"></p-button>
+      <p-button type="button" label="Создать вопрос" icon="pi pi-plus"
+                (onClick)="showCreateQuestionDialog()"></p-button>
     </div>
   </div>
 
@@ -101,17 +102,21 @@
           <ng-template pTemplate="footer">
             <div class="flex flex-column gap-2">
               <small>Категория: {{ question.category }}</small>
-              <br>
               <small>Автор: {{ question.author.username }}</small>
-              <br>
               <small>Создан: {{ question.createdAt | date : 'dd.MM.yyyy' }}</small>
-              <br>
               <small>Изменен: {{ question.updatedAt | date : 'dd.MM.yyyy' }}</small>
               <p-button severity="primary" label="Подробности" size="small" icon="pi pi-arrow-right" iconPos="right"
                         (onClick)="viewDetails(question.id)"></p-button>
-              <p-tag value="Количество ответов: {{question.answersCount > 0 ? question.answersCount : 0}}"></p-tag>
-              <p-tag [value]="question.bestAnswerId ? 'Есть лучший ответ': 'Нет лучшего ответа'"
-                     [severity]="question.bestAnswerId ? 'success': 'info'"></p-tag>
+              <p-tag
+                value="Количество ответов: {{question.answersCount > 0 ? question.answersCount : 0}}"
+                severity="info"
+              >
+              </p-tag>
+              <p-tag
+                [value]="question.bestAnswerId ? 'Есть лучший ответ': 'Нет лучшего ответа'"
+                [severity]="question.bestAnswerId ? 'success': 'secondary'"
+              >
+              </p-tag>
             </div>
 
           </ng-template>
@@ -119,7 +124,10 @@
       </div>
     </div>
 
-    <!-- Пагинация -->
+
+  </div>
+  <!-- Пагинация -->
+  <div class="section-panel paginator-panel">
     <p-paginator
       [rows]="pageSize"
       [totalRecords]="totalQuestions$ | async"
@@ -130,4 +138,5 @@
       currentPageReportTemplate="{first}-{last} из {totalRecords}"
     ></p-paginator>
   </div>
+
 </div>

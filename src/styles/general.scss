@@ -1,8 +1,15 @@
+
+body {
+  height: 100vh;
+  margin: 0;
+}
+
 app-root {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+  min-height: 100%;
   gap: 1rem;
   position: relative;
 
@@ -31,10 +38,10 @@ app-root {
 .section-panel {
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 20px;
+  padding: 12px;
   margin-bottom: 1.25rem;
   background-color: var(--surface-100);
-  h1, h3 {
+  h1, h2, h3 {
     margin: 0;
   }
   .p-paginator {
@@ -58,6 +65,14 @@ app-root {
   .actions {
     display: flex;
     gap: 0.5rem;
+  }
+  @media only screen and (max-width: 575.98px) {
+    .actions {
+      flex-direction: column;
+      button {
+        width: 100%;
+      }
+    }
   }
 }
 

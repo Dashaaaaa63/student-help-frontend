@@ -1,7 +1,7 @@
 <div class="profile-container">
   <!-- Карточка профиля -->
   <div class="section-panel">
-    <h2>Профиль</h2>
+    <h2 class="mb-2">Профиль</h2>
     <div *ngIf="!isEditMode; else editMode">
       <p><strong>Логин:</strong> {{ userProfile.username }}</p>
       <p><strong>Email:</strong> {{ userProfile.email }}</p>
@@ -34,7 +34,7 @@
 
   <!-- Форма смены пароля -->
   <div class="section-panel">
-    <h2>Смена пароля</h2>
+    <h2 class="mb-2">Смена пароля</h2>
     <form class="form-container" [formGroup]="passwordForm" (ngSubmit)="changePassword()">
       <!-- Текущий пароль -->
       <div class="field">
@@ -116,5 +116,6 @@
     </form>
   </div>
 
-  <app-questions-list [userId]="userProfile.id"></app-questions-list>
+  <app-questions-list class="no-paginator-sticky" [userId]="userProfile.id"></app-questions-list>
+
 </div>

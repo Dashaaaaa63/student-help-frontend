@@ -42,7 +42,6 @@ import {PanelModule} from "primeng/panel";
     NgForOf,
     SlicePipe,
     PaginatorModule,
-    ButtonDirective,
     DynamicDialogModule,
     TagModule,
     CheckboxModule,
